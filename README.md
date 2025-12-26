@@ -2,6 +2,19 @@
 
 Ce projet est une API de suivi d'habitudes construite avec Django et Django REST Framework. Il permet la gestion des utilisateurs, des tâches quotidiennes, des objectifs et des notifications automatisées.
 
+## Table des Matières
+
+1. [Habit Tracker API - Backend](#habit-tracker-api---backend)
+   - [Installation et Configuration](#installation-et-configuration)
+     - [1. Environnement virtuel](#1-environnement-virtuel)
+     - [2. Installation des dépendances](#2-installation-des-dependances)
+     - [3. Base de données et Serveur](#3-base-de-donnees-et-serveur)
+   - [Utilisation et Tests](#utilisation-et-tests)
+     - [Authentification par Session](#authentification-par-session)
+     - [Points d'entrée principaux](#points-dentree-principaux)
+   - [Travaux restants et Améliorations](#travaux-restants-et-ameliorations)
+   - [Architecture](#architecture)
+
 ## Installation et Configuration
 
 ### 1. Environnement virtuel
