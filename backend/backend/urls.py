@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/auth/register/', RegisterView.as_view(), name='register'),
     path('api/auth/login/', LoginView.as_view()),
     path('api/auth/logout/', LogoutView.as_view()),
+    path('accounts/', include('allauth.urls')), # Routes Google : /accounts/google/login/
 
     # router URLs
     path('api/', include(router.urls)),
