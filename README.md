@@ -1,6 +1,6 @@
 # Habit Tracker API - Backend
 
-Ce projet est une API de suivi d'habitudes construite avec Django et Django REST Framework. Il permet la gestion des utilisateurs, des tâches quotidiennes, des objectifs et des notifications automatisées.
+Ce projet est une solution intelligente de suivi d'habitudes. Contrairement à une simple liste de tâches, cette API connecte les actions quotidiennes à des objectifs de vie à long terme, tout en automatisant le feedback et l'analyse des progrès.
 
 ## Table des Matières
 
@@ -9,11 +9,15 @@ Ce projet est une API de suivi d'habitudes construite avec Django et Django REST
      - [1. Environnement virtuel](#1-environnement-virtuel)
      - [2. Installation des dépendances](#2-installation-des-dépendances)
      - [3. Base de données et Serveur](#3-base-de-données-et-serveur)
-   - [Système d'Authentification](#système-dauthentification)
-   - [Logique Métier et Fonctionnalités](#logique-métier-et-fonctionnalités)
+   - [Fonctionnalités](#fonctionnalités)
+     - [1. Authentification](#1-authentification)
+     - [2. Habitudes (Tâches et Journal)](#2-habitudes-tâches-et-journal)
+     - [3. Objectifs (Goals)](#3-objectifs-goals)
+     - [4. Notifications](#4-notifications)
+     - [5. Analytique](#5-analytique)
    - [Points d'entrée de l'API](#points-dentrée-de-lapi)
+   - [Architecture du Projet](#architecture-du-projet)
    - [Travaux restants et Améliorations](#travaux-restants-et-améliorations)
-     - [Architecture du Projet](#architecture-du-projet)
 
 ---
 
@@ -51,75 +55,65 @@ L'API est accessible à l'adresse : `http://127.0.0.1:8000/api/`
 
 ---
 
-## Système d'Authentification
+## Fonctionnalités
 
-L'application propose deux méthodes de connexion sécurisées basées sur le système de **Session Django** :
+### 1. Authentification
 
-1. **Authentification Native** : Inscription et connexion classique via les endpoints `/api/auth/`.
-2. **Authentification Google (OAuth2)** : Intégration de `django-allauth` permettant aux utilisateurs de se connecter ou de s'inscrire en un clic via leur compte Google. Cette méthode crée automatiquement un profil utilisateur en base de données.
+- **Méthode Classique** : Inscription et connexion standard via un email et un mot de passe.
+- **Connexion Google** : Intégration de Google OAuth2 permettant une connexion rapide. Le compte est automatiquement créé en base de données lors de la première connexion. Pour le déploiement, la configuration des clés Google est automatisée via le fichier `.env`.
 
----
+### 2. Habitudes (Tâches et Journal)
 
-## Logique Métier et Fonctionnalités
+Ce module gère le quotidien de l'utilisateur.
 
-### 1. Relation Hiérarchique Objectifs / Tâches
+- **Tâches** : Création de listes d'actions quotidiennes à accomplir.
+- **Journal** : Un espace pour consigner des réflexions quotidiennes, permettant de garder une trace écrite de son état d'esprit et de ses progrès.
 
-Contrairement à une simple liste, l'application lie techniquement les tâches aux objectifs :
+### 3. Objectifs (Goals)
 
-- **Structure** : Un Objectif (Goal) peut contenir plusieurs Tâches (Tasks).
-- **Automation** : Lorsqu'une tâche est marquée comme terminée, le système vérifie automatiquement l'état des autres tâches liées. Si 100% des tâches d'un objectif sont finies, l'Objectif est automatiquement marqué comme complété.
+Cette fonctionnalité structure les ambitions à long terme en les liant aux actions quotidiennes.
 
-### 2. Système de Notifications Événementiel
+- **Relation Goals/Tasks** : Un objectif est relié à une ou plusieurs tâches spécifiques.
+- **Complétion Automatique** : La logique métier surveille l'avancement des tâches. Dès que toutes les tâches liées à un objectif sont marquées comme terminées, l'objectif est automatiquement validé par le système.
 
-L'application utilise les **Django Signals** pour générer des notifications sans intervention manuelle :
+### 4. Notifications
 
-- **À la création** : Une notification est créée dès qu'un nouvel objectif est défini.
-- **À la réussite** : Dès qu'un objectif est atteint (automatiquement ou manuellement), une notification de félicitations est générée pour l'utilisateur.
+Le système communique automatiquement avec l'utilisateur selon ses actions.
 
-### 3. Module d'Analytique Dynamique
+- **Création** : Une notification est générée instantanément lors de la création d'un nouvel "Goals" ou lorsqu'un "Goal" est atteint.
+- **Gestion** : L'utilisateur peut consulter ses alertes et les marquer comme "lues" pour vider sa boîte de réception.
 
-L'endpoint `/api/analytics/` compile les données en temps réel pour offrir une vue d'ensemble :
+### 5. Analytique
 
-- **Calculs** : Taux de complétion global des tâches.
-- **Traçabilité** : Retourne non seulement les compteurs, mais aussi les listes d'IDs des tâches et objectifs "En cours" vs "Terminés", permettant un suivi précis.
-
-### 4. Journal de Bord
-
-Un espace dédié aux notes quotidiennes permettant à l'utilisateur de consigner ses réflexions sur sa progression.
+- **Indicateurs de Performance** : Calcule le taux de réussite global des tâches en pourcentage.
+- **Suivi par ID** : Pour une précision maximale, le système liste non seulement les compteurs (nombre de tâches finies), mais aussi les identifiants (IDs) précis des tâches et objectifs en cours ou terminés. Cela permet d'identifier exactement ce qui a été accompli.
 
 ---
 
 ## Points d'entrée de l'API
 
-| Endpoint                  | Méthode   | Description                                             |
-| ------------------------- | --------- | ------------------------------------------------------- |
-| `/api/auth/login/`        | POST      | Connexion session classique                             |
-| `/accounts/google/login/` | GET       | Connexion via Google OAuth2                             |
-| `/api/habits/tasks/`      | GET/POST  | Gestion des tâches (liées ou non à un objectif)         |
-| `/api/goals/`             | GET/POST  | Gestion des objectifs (inclut les IDs des tâches liées) |
-| `/api/analytics/`         | GET       | Statistiques globales et listes d'IDs de suivi          |
-| `/api/notifications/`     | GET/PATCH | Consultation et marquage des alertes                    |
-| `/api/habits/journals/`   | GET/POST  | Gestion des notes de réflexion                          |
+| Endpoint                  | Méthode   | Description                               |
+| ------------------------- | --------- | ----------------------------------------- |
+| `/api/auth/login/`        | POST      | Connexion session classique               |
+| `/accounts/google/login/` | GET       | Connexion via Google OAuth2               |
+| `/api/habits/tasks/`      | GET/POST  | Gestion des tâches quotidiennes           |
+| `/api/goals/`             | GET/POST  | Gestion des objectifs à long terme        |
+| `/api/analytics/`         | GET       | Vue d'ensemble des progrès (statistiques) |
+| `/api/notifications/`     | GET/PATCH | Consultation et gestion des alertes       |
+| `/api/habits/journals/`   | GET/POST  | Notes de réflexion et journal de bord     |
 
 ---
 
 ## Architecture du Projet
 
-- **`apps.users`** : Gestion des comptes, de la sécurité et de l'intégration sociale.
-- **`apps.habits`** : Gestion des tâches (Tasks) et du journal quotidien.
-- **`apps.goals`** : Gestion des objectifs et logique de complétion automatique.
-- **`apps.notifications`** : Moteur d'alertes basé sur les signaux de la base de données.
+- **`apps.users`** : Sécurité, gestion des comptes et intégration Google.
+- **`apps.habits`** : Gestion opérationnelle (Tâches et Journal).
+- **`apps.goals`** : Vision stratégique et calculs de progression.
+- **`apps.notifications`** : Système de communication interne automatisé.
 
 ---
 
 ## Travaux restants et Améliorations
 
-- **Documentation Swagger/OpenAPI** : Génération d'une interface interactive pour tester l'API.
-- **Système de Rappels (Cron)** : Envoi automatique de notifications de rappel pour les tâches non remplies en fin de journée.
-- **Filtres Avancés** : Recherche par date et filtrage par statut sur les listes de tâches.
-- **Évolution du Journal** : Ajout d'un système de suivi de l'humeur (Mood Tracking) pour enrichir les analyses.
-- **Interface d'Administration** : Finalisation de la personnalisation du dashboard `/admin` pour le support client.
-
----
-
-**Souhaitez-vous que je vous aide à implémenter l'une de ces améliorations, comme la documentation Swagger, pour rendre le projet encore plus "clés en main" pour votre client ?**
+- **Documentation Swagger/OpenAPI** : Mise en place d'une interface interactive pour permettre au client de tester chaque fonctionnalité directement depuis son navigateur.
+- **Interface d'Administration Client** : Personnalisation complète du tableau de bord `/admin` pour faciliter la gestion des utilisateurs et des contenus par le client.
