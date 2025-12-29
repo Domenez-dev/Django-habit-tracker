@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 # Internal Apps views
 from apps.users.views import RegisterView, LogoutView, LoginView
 from apps.habits.views import TaskViewSet, JournalViewSet
-from apps.goals.views import GoalViewSet
+from apps.goals.views import GoalViewSet, UserAnalyticsView
 from apps.notifications.views import NotificationViewSet
 
 # router handle GET, POST, PUT, DELETE automatically
@@ -27,4 +27,7 @@ urlpatterns = [
 
     # router URLs
     path('api/', include(router.urls)),
+
+    # Other URLs
+    path('api/analytics/', UserAnalyticsView.as_view(), name='user-analytics'),
 ]

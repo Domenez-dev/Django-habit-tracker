@@ -21,22 +21,50 @@ class UserAnalyticsView(APIView):
     def get(self, request):
         user = request.user
         
-        # Calculate simple stats
-        total_tasks = Task.objects.filter(user=user).count()
-        done_tasks = Task.objects.filter(user=user, is_done=True).count()
+        tasks = Task.objects.filter(user=user)
+        total_tasks = tasks.count()
+        completed_task_ids = list(tasks.filter(is_done=True).values_list('id', flat=True))
+        pending_task_ids = list(tasks.filter(is_done=False).values_list('id', flat=True))
         
-        active_goals = Goal.objects.filter(user=user, is_completed=False).count()
-        journal_count = Journal.objects.filter(user=user).count()
+        goals = Goal.objects.filter(user=user)
+        total_goals = goals.count()
+        completed_goal_ids = list(goals.filter(is_completed=True).values_list('id', flat=True))
+        active_goal_ids = list(goals.filter(is_completed=False).values_list('id', flat=True))
+        
+        journal_ids = list(Journal.objects.filter(user=user).values_list('id', flat=True))
 
-        # Calculate completion rate
-        rate = (done_tasks / total_tasks * 100) if total_tasks > 0 else 0
+        # taux global
+        completion_rate = (len(completed_task_ids) / total_tasks * 100) if total_tasks > 0 else 0
 
         return Response({
-            "username": user.username,
-            "stats": {
-                "task_completion_rate": f"{round(rate, 2)}%",
-                "total_tasks_created": total_tasks,
-                "pending_goals": active_goals,
-                "total_journal_entries": journal_count
+            "summary": {
+                "user": user.username,
+                "completion_rate": f"{round(completion_rate, 1)}%"
+            },
+            "tasks": {
+                "total_count": total_tasks,
+                "completed": {
+                    "count": len(completed_task_ids),
+                    "ids": completed_task_ids
+                },
+                "pending": {
+                    "count": len(pending_task_ids),
+                    "ids": pending_task_ids
+                }
+            },
+            "goals": {
+                "total_count": total_goals,
+                "completed": {
+                    "count": len(completed_goal_ids),
+                    "ids": completed_goal_ids
+                },
+                "active": {
+                    "count": len(active_goal_ids),
+                    "ids": active_goal_ids
+                }
+            },
+            "journal": {
+                "total_entries": len(journal_ids),
+                "entry_ids": journal_ids
             }
         })
