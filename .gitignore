@@ -44,3 +44,5 @@ Thumbs.db
 *.swo
 *.sublime-project
 *.sublime-workspace
+
+client_secret.json
