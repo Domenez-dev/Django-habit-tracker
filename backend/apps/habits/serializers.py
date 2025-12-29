@@ -4,7 +4,7 @@ from .models import Task, Journal
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id', 'title', 'is_done', 'date']
+        fields = ['id', 'title', 'is_done', 'date', 'goal']
 
 class JournalSerializer(serializers.ModelSerializer):
     class Meta:
