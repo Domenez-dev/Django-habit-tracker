@@ -15,6 +15,7 @@ Ce projet est une solution intelligente de suivi d'habitudes. Contrairement à u
      - [3. Objectifs (Goals)](#3-objectifs-goals)
      - [4. Notifications](#4-notifications)
      - [5. Analytique](#5-analytique)
+   - [Documentation Interactive (Swagger)](#documentation-interactive-swagger)
    - [Points d'entrée de l'API](#points-dentrée-de-lapi)
    - [Architecture du Projet](#architecture-du-projet)
    - [Travaux restants et Améliorations](#travaux-restants-et-améliorations)
@@ -87,6 +88,15 @@ Le système communique automatiquement avec l'utilisateur selon ses actions.
 
 - **Indicateurs de Performance** : Calcule le taux de réussite global des tâches en pourcentage.
 - **Suivi par ID** : Pour une précision maximale, le système liste non seulement les compteurs (nombre de tâches finies), mais aussi les identifiants (IDs) précis des tâches et objectifs en cours ou terminés. Cela permet d'identifier exactement ce qui a été accompli.
+
+---
+
+## Documentation Interactive (Swagger)
+
+L'API inclut une documentation complète et interactive accessible via Swagger UI. Cela permet de tester les fonctionnalités sans installer de logiciel tiers.
+
+- **Accès** : `http://127.0.0.1:8000/api/docs/`
+- **Usage** : Permet de visualiser tous les paramètres requis pour chaque requête (GET, POST, etc.) et de visualiser les réponses en temps réel.
 
 ---
 
